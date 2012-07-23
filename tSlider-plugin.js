@@ -1,6 +1,22 @@
 (function ($) {
-    $.fn.tSlider = function (place,images) {
-        $.fn.tSlider.images = images;
+    $.fn.tSlider = function (place,images,options) {
+
+        //check that images has a length, if you supply an object with a length 
+        //property just to be a smartass dont be surpised when it breaks
+        if (images.length > 0) 
+            $.fn.tSlider.images = images;
+
+        //define defaults
+        var defaults = {
+            height: '400px',
+            width: '50%',
+            buttonImages: null
+        }
+
+        //combine user-supplied options and defaults into a config object
+        var config = $.extend({}, defaults, options);
+
+        // console.log(config);
 
         $.fn.tSlider.outer = $(place);
 
@@ -14,14 +30,28 @@
             $.fn.tSlider.inner.append('<img src="' + $.fn.tSlider.images[imgsrc] + '"/>');
         }
 
-        $.fn.tSlider.outer.before('<a id="tSlide-b" href="#">&lt;</a>').after('<a id="tSlide-f" href="#">&gt;</a>');
+        $.fn.tSlider.outer.before('<a class="tSlide-button" id="tSlide-b" href="">&lt;</a>')
+                            .after('<a class="tSlide-button" id="tSlide-f" href="">&gt;</a>');
+
+        if (config.buttonImages != null) {
+
+            $('#tSlide-b').html('<img src="' + config.buttonImages[0]+'"/>');
+            $('#tSlide-f').html('<img src="' + config.buttonImages[1]+'"/>');
+            $('.tSlide-button').children()
+                .css({
+                    position: 'relative',
+                    bottom: ($.fn.tSlider.outer)/2,
+                    display: 'inline-block',
+                    'height':'50px'
+                });
+        }
 
         $.fn.tSlider.outer.css({
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             position: 'relative',
-            height: '200px',
-            width: '50%',
+            height: config.height,
+            width: config.width,
             display: 'inline-block'
         });
 
@@ -41,9 +71,9 @@
         
         $.fn.tSlider.current = 0;
 
-        $.fn.tSlider.getDs = function () {
+        $.fn.tSlider.getDistances = function () {
             $(window).load(function () {
-                $('img').each(function () {
+                $.fn.tSlider.inner.children('img').each(function () {
                     // console.log($.fn.tSlider.distances)
                     // console.log($(this).position().left);
                     $.fn.tSlider.distances.push($(this).position().left);
@@ -68,7 +98,7 @@
              //end slide
         }
 
-        $('#tSlide-b').click(function () {
+        $('#tSlide-b').click(function (e) {
             // console.log('fw clicked');
             // console.log('current: ',$.fn.tSlider.current);
 
@@ -78,10 +108,10 @@
                 $.fn.tSlider.current = $.fn.tSlider.distances.length-1;
                 $.fn.tSlider.slide($.fn.tSlider.current);
             }
-            return false;
+            e.preventDefault();
         });
 
-        $('#tSlide-f').click(function () {
+        $('#tSlide-f').click(function (e) {
             // console.log('fw clicked');
             // console.log('current: ',$.fn.tSlider.current);
             
@@ -91,9 +121,10 @@
                 $.fn.tSlider.current = 0;
                 $.fn.tSlider.slide($.fn.tSlider.current);
             }
-
-        //     return false;
+            e.preventDefault();
         });
+
+        //TODO: add window.resize
 
         return this;    
 
