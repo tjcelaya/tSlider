@@ -16,10 +16,9 @@
         //combine user-supplied options and defaults into a config object
         var config = $.extend({}, defaults, options);
 
-        // console.log(config);
-
+        //set the outer and inner elements as a property of this plugin
         $.fn.tSlider.outer = $(place);
-
+        //the inner elements are created here
         $.fn.tSlider.inner = $.fn.tSlider.outer.append('<div id="TSlide-inner"></div>').children();
 
         $.fn.tSlider.distances = [];
@@ -33,6 +32,7 @@
         $.fn.tSlider.outer.before('<a class="tSlide-button" id="tSlide-b" href="">&lt;</a>')
                             .after('<a class="tSlide-button" id="tSlide-f" href="">&gt;</a>');
 
+        //use supplied images if they are
         if (config.buttonImages != null) {
 
             $('#tSlide-b').html('<img src="' + config.buttonImages[0]+'"/>');
@@ -66,18 +66,32 @@
         $.fn.tSlider.inner.find('img').css({
             display: 'inline',
             maxHeight: '100%'
-
         })
         
         $.fn.tSlider.current = 0;
+        $.fn.tSlider.buttonHeight = 0;
+        $.fn.tSlider.buttonWidth = 0;
 
-        $.fn.tSlider.getDistances = function () {
+        $.fn.tSlider.finalize = function () {
             $(window).load(function () {
                 $.fn.tSlider.inner.children('img').each(function () {
                     // console.log($.fn.tSlider.distances)
                     // console.log($(this).position().left);
                     $.fn.tSlider.distances.push($(this).position().left);
                 });
+
+                $.fn.tSlider.buttonHeight = $('.tSlide-button').children().height();
+                $.fn.tSlider.buttonWidth = $('.tSlide-button').children().width();
+
+                $('.tSlide-button').css({
+                    position:'relative',
+                    bottom: ($.fn.tSlider.outer.height()-$.fn.tSlider.buttonHeight)/2+'px',
+                    zIndex: 100
+                }).eq(0).css({
+                    left: $.fn.tSlider.buttonWidth
+                }).next().next().css({
+                    right:$.fn.tSlider.buttonWidth
+                })
             });
         };
 
@@ -91,8 +105,8 @@
 
                 $.fn.tSlider.inner.animate({
                         "margin-left": pos + "px"
-                    }, function () {
-                        // console.log('animate done')
+                    // }, function () {
+                    //     console.log('animate done')
                     }
                 ); //end animate
              //end slide
@@ -124,7 +138,11 @@
             e.preventDefault();
         });
 
+        $.fn.tSlider.finalize();
+
+
         //TODO: add window.resize
+
 
         return this;    
 
