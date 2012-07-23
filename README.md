@@ -4,14 +4,24 @@
 
 Include the script anywhere on the page and add a div to put the content into, then call
 
-        $.fn.tSlider( <target div>, [ Array of images to insert ] )
+        $.fn.tSlider( <target div>, <Array of images to insert> [, options] );
 
 Then call 
 
         $.fn.tSlider.getDistances();
 
-to finalize the plugin.
+to let the plugin calculate the correct movement distances. Options are supported as 
 
-## That's All Folks!
+        options = {
+            height: x,
+            width: y,
+            buttonImages: null
+        }
 
-Options object forthcoming
+Where `x` and `y` are any value that can be passed to a `jQuery.css({object literal})`
+
+## Obviously you need jQuery.
+
+## Author:
+
+Tomas Celaya
